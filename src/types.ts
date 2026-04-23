@@ -12,6 +12,21 @@ export interface ReportData {
   others: string;
 }
 
+export interface PresenterRecord {
+  id: string;
+  personName: string;
+  position: string;
+  department: string;
+  reportData: ReportData;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PresentationStore {
+  presenters: PresenterRecord[];
+  activePresenterId: string | null;
+}
+
 export interface SlideData {
   id: string;
   title: string;
