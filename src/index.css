@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", serif;
+
+  /* Custom palette for Natural Tones */
+  --color-natural-bg: #F4F1EA;
+  --color-natural-ink: #4A4A40;
+  --color-natural-olive: #5A5A40;
+  --color-natural-olive-light: #7A7A60;
+  --color-natural-border: #D9D5CB;
+  --color-natural-sidebar: #EAE7DE;
+}
+
+@layer base {
+  body {
+    @apply antialiased bg-natural-bg text-natural-ink font-sans;
+  }
+}
+
+@layer utilities {
+  .bg-warm-gradient {
+    background: linear-gradient(135deg, #FDFCFB 0%, #E2D1C3 100%);
+  }
+  .dot-pattern {
+    background-image: radial-gradient(#5A5A40 0.5px, transparent 0.5px);
+    background-size: 20px 20px;
+  }
+}
