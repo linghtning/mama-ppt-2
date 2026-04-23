@@ -272,7 +272,7 @@ export default function App() {
             
             <footer className="mt-12 py-8 border-t border-natural-border/40 dark:border-[#3a3a30] flex justify-between items-center text-slate-400 dark:text-slate-500 text-[11px] font-medium tracking-wide">
               <div className="flex items-center gap-4">
-                 <span>© 2024 YIRUITE PACKAGING</span>
+                 <span>© 2026 YIRUITE PACKAGING</span>
                  <span className="opacity-40">|</span>
                  <span>SALES DEPT</span>
               </div>
