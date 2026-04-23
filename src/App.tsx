@@ -13,6 +13,7 @@ import {
   FileSpreadsheet,
   Moon,
   Play,
+  Sparkles,
   Sun,
   Upload,
   Users,
@@ -159,8 +160,8 @@ export default function App() {
       )}
 
       {view === 'editor' ? (
-        <div className="flex min-h-screen overflow-hidden">
-          <aside className="w-[340px] shrink-0 border-r border-natural-border bg-natural-sidebar px-6 py-6 transition-colors duration-300">
+        <div className="flex h-screen overflow-hidden">
+          <aside className="flex h-screen w-[340px] shrink-0 flex-col overflow-hidden border-r border-natural-border bg-natural-sidebar px-6 py-6 transition-colors duration-300">
             <header className="mb-8 flex items-start justify-between gap-3">
               <div>
                 <div className="mb-1 flex items-center gap-2 text-natural-olive">
@@ -198,7 +199,7 @@ export default function App() {
               </button>
             </div>
 
-            <div className="mt-6 rounded-3xl border border-natural-border/70 bg-white/55 p-5 shadow-[0_8px_30px_rgba(0,0,0,0.03)] dark:bg-white/5">
+            <div className="mt-6 flex min-h-0 flex-1 flex-col rounded-3xl border border-natural-border/70 bg-white/55 p-5 shadow-[0_8px_30px_rgba(0,0,0,0.03)] dark:bg-white/5">
               <div className="mb-4 flex items-center justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.28em] text-natural-olive/65">
@@ -212,7 +213,7 @@ export default function App() {
               </div>
 
               {store.presenters.length > 0 ? (
-                <div className="space-y-3">
+                <div className="theme-scrollbar min-h-0 flex-1 space-y-1.5 overflow-y-auto pr-2">
                   {store.presenters.map((presenter, index) => {
                     const isActive = presenter.id === activePresenter?.id;
 
@@ -221,22 +222,36 @@ export default function App() {
                         key={presenter.id}
                         onClick={() => setStore((prev) => ({ ...prev, activePresenterId: presenter.id }))}
                         className={cn(
-                          'w-full rounded-2xl border p-4 text-left transition-all',
+                          'w-full rounded-xl border px-3.5 py-2.5 text-left transition-all',
                           isActive
-                            ? 'border-natural-olive bg-natural-olive text-white shadow-lg shadow-natural-olive/15'
-                            : 'border-natural-border bg-white/75 hover:bg-white dark:bg-white/5 dark:hover:bg-white/10',
+                            ? 'border-natural-olive/30 bg-white text-natural-olive shadow-none ring-1 ring-natural-olive/8 dark:bg-white/8'
+                            : 'border-transparent bg-transparent shadow-none hover:border-natural-border/70 hover:bg-white/45 dark:hover:bg-white/8',
                         )}
                       >
-                        <p className="text-[11px] uppercase tracking-[0.28em] opacity-70">
-                          #{String(index + 1).padStart(2, '0')}
-                        </p>
-                        <p className="mt-1 truncate text-base font-semibold">
-                          {presenter.personName}
-                        </p>
-                        <p className={cn('mt-1 text-xs', isActive ? 'text-white/80' : 'opacity-65')}>
-                          {presenter.department || '未填写部门'}
-                          {presenter.position ? ` / ${presenter.position}` : ''}
-                        </p>
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-[14px] font-semibold leading-5">
+                              {presenter.personName}
+                            </p>
+                            <p
+                              className={cn(
+                                'mt-0.5 truncate text-[11px] leading-5',
+                                isActive ? 'text-natural-olive/80' : 'opacity-60',
+                              )}
+                            >
+                              {presenter.department || '未填写部门'}
+                              {presenter.position ? ` / ${presenter.position}` : ''}
+                            </p>
+                          </div>
+                          <span
+                            className={cn(
+                              'shrink-0 text-[10px] font-semibold uppercase tracking-[0.18em]',
+                              isActive ? 'text-natural-olive/70' : 'opacity-35',
+                            )}
+                          >
+                            {String(index + 1).padStart(2, '0')}
+                          </span>
+                        </div>
                       </button>
                     );
                   })}
@@ -247,8 +262,8 @@ export default function App() {
             </div>
           </aside>
 
-          <main className="flex-1 overflow-y-auto bg-natural-bg px-8 py-8 transition-colors duration-300 md:px-10">
-            <header className="mb-8 flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+          <main className="flex h-screen flex-1 flex-col overflow-hidden bg-natural-bg px-8 py-8 transition-colors duration-300 md:px-10">
+            <header className="mb-8 flex shrink-0 flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.32em] text-natural-olive/65">
                   后台只读预览
@@ -279,9 +294,10 @@ export default function App() {
               </div>
             </header>
 
-            {activePresenter ? (
-              <div className="grid gap-8 xl:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
-                <section className="rounded-[28px] border border-natural-border bg-white p-7 shadow-[0_10px_40px_rgba(0,0,0,0.04)] dark:bg-natural-sidebar/50">
+            <div className="min-h-0 flex-1 overflow-hidden">
+              {activePresenter ? (
+                <div className="grid h-full gap-8 xl:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
+                  <section className="theme-scrollbar min-h-0 overflow-y-auto rounded-[28px] border border-natural-border bg-white p-7 shadow-[0_10px_40px_rgba(0,0,0,0.04)] dark:bg-natural-sidebar/50">
                   <div className="mb-5 flex items-center justify-between">
                     <div>
                       <p className="text-xs font-bold uppercase tracking-[0.28em] text-natural-olive/65">
@@ -311,7 +327,7 @@ export default function App() {
                   </div>
                 </section>
 
-                <section className="rounded-[28px] border border-natural-border bg-white p-8 shadow-[0_10px_40px_rgba(0,0,0,0.04)] dark:bg-natural-sidebar/50">
+                <section className="theme-scrollbar min-h-0 overflow-y-auto rounded-[28px] border border-natural-border bg-white p-8 shadow-[0_10px_40px_rgba(0,0,0,0.04)] dark:bg-natural-sidebar/50">
                   <div className="mb-6">
                     <p className="text-xs font-bold uppercase tracking-[0.28em] text-natural-olive/65">
                       导入规则
@@ -335,55 +351,34 @@ export default function App() {
                       description="点击左侧人员后，右侧只显示该人员的个人信息，不提供编辑入口。"
                     />
                     <RuleCard
-                      title="前台照常演示"
-                      description="导入完成后可直接进入前台，并在演示界面切换不同人员播放内容。"
+                      title="前台固定播放"
+                      description="前台只播放后台当前选中的人员，进入演示后不能在前台切换其他人员。"
                     />
                   </div>
 
                   <div className="mt-8 rounded-3xl bg-natural-bg/70 p-5 dark:bg-black/10">
                     <p className="text-sm font-semibold text-natural-olive">Excel 流程</p>
                     <p className="mt-3 text-sm leading-7 opacity-75">
-                      先导出单人 Excel 模板，填写该人员的信息后导入。若后续要修改同一个人的演讲内容，请重新导入同名 Excel，系统会用新数据覆盖旧数据。
+                      先导出单人 Excel 模板。模板里已经带了示例内容，直接覆盖示例即可；基础信息填写在前几列，多条演讲内容按你截图那样在同一列里向下逐行填写，导入时系统会自动合并。若后续要修改同一个人的演讲内容，请重新导入同名 Excel，系统会用新数据覆盖旧数据。
                     </p>
                   </div>
                 </section>
+                </div>
+              ) : (
+                <EmptyPreviewState />
+              )}
+            </div>
+
+            <footer className="mt-6 flex shrink-0 justify-end">
+              <div className="flex items-center gap-2 rounded-full border border-natural-border/70 bg-white/70 px-4 py-2 text-sm text-natural-olive shadow-[0_8px_24px_rgba(0,0,0,0.03)] dark:bg-white/5">
+                <Sparkles size={16} />
+                <span>专属定制:祝妈妈每天工作都有好心情</span>
               </div>
-            ) : (
-              <EmptyPreviewState />
-            )}
+            </footer>
           </main>
         </div>
       ) : (
         <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-black select-none">
-          <div className="absolute left-6 top-6 z-[60] flex items-center gap-3 rounded-full border border-white/10 bg-black/30 px-4 py-2 text-white backdrop-blur-md">
-            <span className="text-xs font-bold uppercase tracking-[0.24em] text-white/70">
-              当前演讲人
-            </span>
-            <select
-              value={activePresenter?.id ?? ''}
-              onChange={(event) =>
-                setStore((prev) => ({ ...prev, activePresenterId: event.target.value }))
-              }
-              className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm text-white outline-none"
-            >
-              {store.presenters.map((presenter) => (
-                <option key={presenter.id} value={presenter.id} className="text-black">
-                  {presenter.personName}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="absolute right-6 top-6 z-[60] flex items-center gap-3">
-            <button
-              onClick={() => setView('editor')}
-              className="rounded-full bg-white/10 p-3 text-white backdrop-blur-md transition hover:bg-white/20"
-              title="退出演示"
-            >
-              <X size={24} />
-            </button>
-          </div>
-
           <div className="relative flex-1">
             <AnimatePresence mode="wait">
               <Slide
@@ -395,21 +390,34 @@ export default function App() {
             </AnimatePresence>
           </div>
 
-          <div className="pointer-events-none absolute bottom-10 left-0 right-0 z-[60] flex items-center justify-center gap-8">
+          <div className="absolute right-6 top-6 z-50 flex items-center gap-3">
+            <div className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm text-white backdrop-blur-md">
+              {activePresenter?.personName || '未选择'}
+            </div>
+            <button
+              onClick={() => setView('editor')}
+              className="rounded-full bg-white/10 p-3 text-white backdrop-blur-md transition-all hover:bg-white/20 active:scale-95"
+              title="退出预览 (Esc)"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          <div className="pointer-events-none absolute bottom-10 left-0 right-0 z-50 flex items-center justify-center gap-8">
             <button
               onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
               disabled={currentSlide === 0}
               className={cn(
-                'pointer-events-auto rounded-full p-4 backdrop-blur-md transition',
+                'pointer-events-auto rounded-full p-4 backdrop-blur-md transition-all active:scale-90',
                 currentSlide === 0
-                  ? 'bg-white/5 text-white/25'
+                  ? 'bg-white/5 text-white/20'
                   : 'bg-white/10 text-white hover:bg-white/20',
               )}
             >
               <ChevronLeft size={32} />
             </button>
 
-            <div className="pointer-events-auto rounded-full border border-white/10 bg-black/30 px-6 py-2 font-mono text-sm text-white/75 backdrop-blur-md">
+            <div className="pointer-events-auto rounded-full border border-white/10 bg-black/30 px-6 py-2 font-mono text-sm text-white/70 backdrop-blur-md">
               {currentSlide + 1} / {slides.length}
             </div>
 
@@ -417,10 +425,10 @@ export default function App() {
               onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, slides.length - 1))}
               disabled={currentSlide === slides.length - 1}
               className={cn(
-                'pointer-events-auto rounded-full p-4 backdrop-blur-md transition',
+                'pointer-events-auto rounded-full p-4 backdrop-blur-md transition-all active:scale-90',
                 currentSlide === slides.length - 1
-                  ? 'bg-white/5 text-white/25'
-                  : 'bg-white/10 text-white hover:bg-white/20',
+                  ? 'bg-white/5 text-white/20'
+                  : 'bg-white/10 text-white shadow-xl shadow-blue-500/20 hover:bg-white/20',
               )}
             >
               <ChevronRight size={32} />
@@ -493,8 +501,14 @@ const Slide: React.FC<{
   slides: SlideData[];
 }> = ({ data, presenter, slides }) => {
   const contentLines = data.content?.split('\n').filter((line) => line.trim() !== '') || [];
-  const displayName = presenter?.personName || '未命名演讲人';
-  const weekNumber = presenter?.reportData.weekNumber || '未填写';
+  const reportData = presenter?.reportData ?? {
+    weekNumber: '',
+    lastWeekCompletion: '',
+    thisWeekPlan: '',
+    dataSupport: '',
+    problems: '',
+    others: '',
+  };
 
   return (
     <motion.div
@@ -502,7 +516,7 @@ const Slide: React.FC<{
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
-      className="absolute inset-0 flex items-center justify-center overflow-hidden text-natural-ink dark:text-[#d1d1c7]"
+      className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden text-natural-ink dark:text-[#d1d1c7]"
     >
       <div className="absolute inset-0 z-0 overflow-hidden bg-slate-900">
         <div
@@ -512,7 +526,8 @@ const Slide: React.FC<{
             animation: 'kenburns 40s linear infinite alternate',
           }}
         />
-        <div className="absolute inset-0 z-10 bg-black/45 transition-colors duration-300 dark:bg-black/60" />
+        <div className="absolute inset-0 z-10 bg-black/40 transition-colors duration-300 dark:bg-black/60" />
+        <div className="absolute inset-0 z-10 bg-natural-bg/10 dark:bg-black/20" />
         <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
       </div>
 
@@ -522,24 +537,22 @@ const Slide: React.FC<{
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="flex flex-col items-center text-center"
+            className="flex flex-col items-center"
           >
-            <div className="mb-8 rounded-full border border-white/20 bg-white/10 px-6 py-2 text-sm uppercase tracking-[0.32em] text-white/70">
-              {presenter?.department || '演讲部门'}
-              {presenter?.position ? ` · ${presenter.position}` : ''}
-            </div>
             <div className="mb-12 h-1 w-24 bg-white shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
-            <h2 className="mb-5 text-2xl font-serif italic text-white/85">多人演讲展示</h2>
-            <h1 className="text-6xl font-bold tracking-tight text-white drop-shadow-[0_10px_25px_rgba(0,0,0,0.5)] md:text-8xl">
-              {displayName}
+            <h3 className="mb-6 text-3xl font-serif italic tracking-wide text-white/90 drop-shadow-lg">
+              成都依瑞特包装有限公司
+            </h3>
+            <h1 className="text-center text-7xl font-bold leading-tight tracking-tighter text-white drop-shadow-[0_10px_25px_rgba(0,0,0,0.5)] md:text-9xl">
+              业务部 工作汇报
             </h1>
-            <p className="mt-5 text-2xl font-serif italic text-white/80">工作汇报 / Presentation</p>
 
-            <div className="mt-14 flex items-center justify-center gap-5 rounded-full border border-white/30 bg-white/18 px-10 py-5 shadow-2xl backdrop-blur-md">
-              <span className="text-lg opacity-75">汇报周次</span>
-              <span className="border-b-4 border-white px-3 text-4xl font-black">
-                {weekNumber}
+            <div className="mt-16 flex items-center justify-center gap-6 rounded-full border border-white/30 bg-white/20 px-12 py-5 shadow-2xl backdrop-blur-md transition-colors">
+              <span className="text-xl font-serif italic opacity-70">第</span>
+              <span className="border-b-4 border-white px-4 text-4xl font-black text-white">
+                {reportData.weekNumber || 'XX'}
               </span>
+              <span className="text-xl font-serif italic opacity-70">周</span>
             </div>
           </motion.div>
         )}
@@ -553,14 +566,11 @@ const Slide: React.FC<{
               className="space-y-4"
             >
               <div className="mb-4 h-1 w-16 bg-white shadow-lg" />
-              <h2 className="font-serif text-7xl font-bold uppercase tracking-tighter text-white drop-shadow-2xl">
+              <h2 className="font-serif text-8xl font-bold uppercase tracking-tighter text-white drop-shadow-2xl">
                 目录
               </h2>
-              <p className="text-lg font-bold uppercase tracking-[0.35em] text-white/75">
+              <p className="text-xl font-bold uppercase tracking-[0.4em] text-white drop-shadow-md opacity-80">
                 Agenda Overview
-              </p>
-              <p className="pt-6 text-xl leading-9 text-white/85">
-                当前演讲人：<span className="font-semibold text-white">{displayName}</span>
               </p>
             </motion.div>
 
@@ -577,12 +587,12 @@ const Slide: React.FC<{
                   initial={{ x: 40, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
-                  className="flex items-center gap-8"
+                  className="group flex items-center gap-8"
                 >
-                  <span className="w-12 border-b-2 border-white/30 text-3xl font-bold text-white/65">
+                  <span className="w-12 border-b-2 border-white/30 text-3xl font-bold italic text-white/60">
                     {index + 1}
                   </span>
-                  <span className="text-3xl font-bold tracking-tight text-white drop-shadow-lg">
+                  <span className="text-3xl font-bold tracking-tight text-white drop-shadow-lg transition-transform duration-300 group-hover:translate-x-2">
                     {item.substring(3)}
                   </span>
                 </motion.div>
@@ -592,34 +602,31 @@ const Slide: React.FC<{
         )}
 
         {data.type === 'content' && (
-          <div className="max-w-5xl">
+          <div className="max-w-4xl">
             <motion.div
               initial={{ x: -30, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="mb-12"
+              className="mb-14"
             >
-              <p className="mb-4 text-sm font-bold uppercase tracking-[0.34em] text-white/65">
-                {displayName} / {weekNumber}
-              </p>
-              <h2 className="mb-6 font-serif text-5xl font-bold italic tracking-tight text-white drop-shadow-2xl md:text-6xl">
+              <h2 className="mb-6 font-serif text-6xl font-bold italic tracking-tighter text-white drop-shadow-2xl">
                 {data.title.substring(3)}
               </h2>
               <div className="h-1.5 w-32 rounded-full bg-white shadow-lg" />
             </motion.div>
 
-            <div className="space-y-8 border-l-4 border-white/20 pl-8">
+            <div className="space-y-10 border-l-4 border-white/20 pl-8">
               {contentLines.length > 0 ? (
                 contentLines.map((line, index) => (
                   <motion.div
                     key={`${line}-${index}`}
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.35 + index * 0.08 }}
+                    transition={{ delay: 0.4 + index * 0.1 }}
                     className="flex items-start gap-6"
                   >
-                    <div className="mt-4 h-3.5 w-3.5 shrink-0 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.75)]" />
-                    <p className="text-3xl font-medium leading-snug text-white drop-shadow-xl md:text-4xl">
+                    <div className="mt-3.5 h-3.5 w-3.5 shrink-0 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
+                    <p className="text-3xl font-serif font-medium italic leading-snug text-white drop-shadow-xl md:text-5xl">
                       {line}
                     </p>
                   </motion.div>
@@ -628,9 +635,9 @@ const Slide: React.FC<{
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="text-3xl italic text-white/45"
+                  className="text-3xl font-serif italic text-white/40"
                 >
-                  当前页还没有填写内容。
+                  暂无具体内容填写...
                 </motion.div>
               )}
             </div>
@@ -644,26 +651,36 @@ const Slide: React.FC<{
             transition={{ delay: 0.3, duration: 1.2, type: 'spring' }}
             className="text-center"
           >
-            <p className="mb-4 text-sm font-bold uppercase tracking-[0.4em] text-white/65">
-              Thank You
-            </p>
-            <h1 className="mb-8 font-serif text-8xl font-bold italic tracking-tight text-white drop-shadow-2xl">
+            <h1 className="mb-12 font-serif text-9xl font-bold italic tracking-tighter text-white drop-shadow-2xl">
               汇报完毕
             </h1>
-            <div className="mx-auto mb-10 h-1 w-24 bg-white shadow-lg" />
-            <p className="text-2xl text-white/85">
-              演讲人：<span className="font-semibold text-white">{displayName}</span>
-            </p>
-            <p className="mt-3 text-lg text-white/65">{getDepartmentAndPosition(presenter)}</p>
+            <div className="mx-auto mb-12 h-1 w-24 bg-white shadow-lg" />
+
+            <div className="mx-auto grid max-w-2xl grid-cols-2 gap-20 border-t border-white/20 pt-12 text-left text-sm font-serif italic text-white/80 drop-shadow-md">
+              <div>
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-white not-italic">
+                  Location
+                </p>
+                <p>成都依瑞特包装有限公司</p>
+                <p>业务部 汇报中心</p>
+              </div>
+              <div className="text-right">
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-white not-italic">
+                  Social
+                </p>
+                <p>Yiruite Packaging Co., Ltd.</p>
+                <p>Weekly Sales Report</p>
+              </div>
+            </div>
           </motion.div>
         )}
       </div>
 
       {data.type !== 'title' && data.type !== 'end' && (
-        <div className="absolute right-10 top-10 flex items-center gap-4 text-xs font-bold uppercase tracking-[0.3em] text-white/60 drop-shadow-md">
+        <div className="absolute right-10 top-20 flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.3em] text-white/60 drop-shadow-md">
           <span>Page {slides.findIndex((slide) => slide.id === data.id) + 1}</span>
           <div className="h-px w-12 bg-white/40" />
-          <span>{displayName}</span>
+          <span>Weekly {reportData.weekNumber || 'XX'}</span>
         </div>
       )}
     </motion.div>

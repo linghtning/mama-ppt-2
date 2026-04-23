@@ -46,6 +46,29 @@
     background-image: radial-gradient(var(--natural-olive) 0.5px, transparent 0.5px);
     background-size: 20px 20px;
   }
+  .theme-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--natural-olive) 72%, white 28%) transparent;
+    scrollbar-gutter: stable;
+  }
+  .theme-scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  .theme-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .theme-scrollbar::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--natural-olive) 72%, white 28%);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .theme-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--natural-olive) 82%, white 18%);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
   @keyframes kenburns {
     from { transform: scale(1); }
     to { transform: scale(1.15); }
