@@ -5,12 +5,12 @@ An offline-friendly weekly report editor and presentation app built with React, 
 ## Requirements
 
 - Node.js 22+
-- npm
+- pnpm
 
 ## Install
 
 ```bash
-npm install
+pnpm install
 ```
 
 ## Development
@@ -18,13 +18,13 @@ npm install
 Run the browser renderer only:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 Run the desktop app with Electron:
 
 ```bash
-npm run dev:desktop
+pnpm run dev:desktop
 ```
 
 ## Build
@@ -32,7 +32,7 @@ npm run dev:desktop
 Build the renderer and Electron main process:
 
 ```bash
-npm run build:desktop
+pnpm run build:desktop
 ```
 
 ## Package for Windows
@@ -40,13 +40,20 @@ npm run build:desktop
 Generate the Windows installer and portable package:
 
 ```bash
-npm run dist:win
+pnpm run dist:win
 ```
 
 Artifacts are written to `release/`.
+
+For a quick local packaging check without creating the installer artifacts:
+
+```bash
+pnpm run dist:win:dir
+```
 
 ## Notes
 
 - Presentation background images are bundled locally for offline use.
 - The app stores report content and theme settings locally on the machine.
 - No API key or external service is required to run the packaged app.
+- Windows packaging in this project uses `signAndEditExecutable=false` to avoid `winCodeSign` symlink extraction failures on machines without symlink privilege. If you need the default executable editing behavior, enable Windows Developer Mode or run the terminal as Administrator and then adjust the packaging command.
