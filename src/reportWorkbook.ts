@@ -28,7 +28,7 @@ const TEMPLATE_FIELDS: FieldConfig[] = [
   { label: '人员姓名', key: 'personName', multiline: false, description: '请直接覆盖示例内容，填写当前演讲人员姓名。' },
   { label: '岗位/身份', key: 'position', multiline: false, description: '例如：销售经理、测试负责人。' },
   { label: '所属部门', key: 'department', multiline: false, description: '例如：销售部、测试部。' },
-  { label: '汇报周次', key: 'weekNumber', multiline: false, description: '例如：第17周。' },
+  { label: '汇报周次', key: 'weekNumber', multiline: false, description: '例如：17。' },
   {
     label: '上周工作完成情况',
     key: 'lastWeekCompletion',
@@ -65,7 +65,7 @@ const EXAMPLE_VALUES: Record<keyof TemplateData, string[]> = {
   personName: ['示例：侯晓明'],
   position: ['示例：测试负责人'],
   department: ['示例：测试部'],
-  weekNumber: ['示例：第17周'],
+  weekNumber: ['示例：17'],
   lastWeekCompletion: [
     '示例：完成周报演示页面联调',
     '示例：修复前台翻页动画显示问题',
