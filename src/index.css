@@ -6,17 +6,35 @@
   --font-serif: "Playfair Display", serif;
 
   /* Custom palette for Natural Tones */
-  --color-natural-bg: #F4F1EA;
-  --color-natural-ink: #4A4A40;
-  --color-natural-olive: #5A5A40;
-  --color-natural-olive-light: #7A7A60;
-  --color-natural-border: #D9D5CB;
-  --color-natural-sidebar: #EAE7DE;
+  --color-natural-bg: var(--natural-bg);
+  --color-natural-ink: var(--natural-ink);
+  --color-natural-olive: var(--natural-olive);
+  --color-natural-olive-light: var(--natural-olive-light);
+  --color-natural-border: var(--natural-border);
+  --color-natural-sidebar: var(--natural-sidebar);
+}
+
+:root {
+  --natural-bg: #F4F1EA;
+  --natural-ink: #4A4A40;
+  --natural-olive: #5A5A40;
+  --natural-olive-light: #7A7A60;
+  --natural-border: #D9D5CB;
+  --natural-sidebar: #EAE7DE;
+}
+
+.dark {
+  --natural-bg: #1A1A15;
+  --natural-ink: #D1D1C7;
+  --natural-olive: #B0B090;
+  --natural-olive-light: #8A8A6A;
+  --natural-border: #3A3A30;
+  --natural-sidebar: #25251D;
 }
 
 @layer base {
   body {
-    @apply antialiased bg-natural-bg text-natural-ink font-sans;
+    @apply antialiased bg-natural-bg text-natural-ink font-sans transition-colors duration-300;
   }
 }
 
@@ -25,7 +43,11 @@
     background: linear-gradient(135deg, #FDFCFB 0%, #E2D1C3 100%);
   }
   .dot-pattern {
-    background-image: radial-gradient(#5A5A40 0.5px, transparent 0.5px);
+    background-image: radial-gradient(var(--natural-olive) 0.5px, transparent 0.5px);
     background-size: 20px 20px;
+  }
+  @keyframes kenburns {
+    from { transform: scale(1); }
+    to { transform: scale(1.15); }
   }
 }

@@ -13,6 +13,8 @@ import {
   Save, 
   FileText,
   Building2,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { ReportData, SlideData } from './types.ts';
 import { BG_IMAGES, INITIAL_REPORT_DATA } from './constants.ts';
@@ -25,10 +27,23 @@ export default function App() {
   });
   const [view, setView] = useState<'editor' | 'presentation'>('editor');
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('yiruit-theme');
+    return saved === 'dark';
+  });
 
   useEffect(() => {
     localStorage.setItem('yiruit-report-data', JSON.stringify(reportData));
   }, [reportData]);
+
+  useEffect(() => {
+    localStorage.setItem('yiruit-theme', isDark ? 'dark' : 'light');
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDark]);
 
   const slides: SlideData[] = [
     {
@@ -111,18 +126,26 @@ export default function App() {
   }, [view, currentSlide]);
 
   return (
-    <div className="min-h-screen bg-natural-bg font-sans text-natural-ink">
+    <div className="min-h-screen bg-natural-bg font-sans text-natural-ink transition-colors duration-300">
       {view === 'editor' ? (
         <div className="flex h-screen overflow-hidden">
           {/* Sidebar */}
-          <aside className="w-72 bg-natural-sidebar border-r border-natural-border flex flex-col p-6 overflow-y-auto">
-            <div className="mb-10">
-              <div className="flex items-center gap-2 text-natural-olive mb-1 italic">
-                <Building2 size={24} strokeWidth={2.5} />
-                <span className="font-bold tracking-tight text-lg font-serif">依瑞特汇报系统</span>
+          <aside className="w-72 bg-natural-sidebar border-r border-natural-border flex flex-col p-6 overflow-y-auto transition-colors duration-300">
+            <header className="flex justify-between items-center mb-10">
+              <div>
+                <div className="flex items-center gap-2 text-natural-olive mb-1 italic">
+                  <Building2 size={24} strokeWidth={2.5} />
+                  <span className="font-bold tracking-tight text-lg font-serif">依瑞特汇报系统</span>
+                </div>
+                <p className="text-[10px] uppercase tracking-[0.2em] opacity-60 font-bold">Report Builder v1.2</p>
               </div>
-              <p className="text-[10px] uppercase tracking-[0.2em] opacity-60 font-bold">Report Builder v1.1</p>
-            </div>
+              <button 
+                onClick={() => setIsDark(!isDark)}
+                className="p-2 rounded-full hover:bg-natural-olive/10 dark:hover:bg-white/10 transition-colors text-natural-olive"
+              >
+                {isDark ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
+            </header>
 
             <div className="flex-1 space-y-4">
               <p className="text-[11px] font-bold uppercase tracking-widest text-natural-olive/60 pl-2">幻灯片预览结构</p>
@@ -142,7 +165,7 @@ export default function App() {
                     "p-3 rounded-xl flex items-center gap-3 border transition-all cursor-default",
                     currentSlide === item.slide 
                       ? "bg-natural-olive text-white border-natural-olive shadow-md" 
-                      : "bg-white/50 text-natural-ink/70 border-natural-border hover:bg-white"
+                      : "bg-white/50 dark:bg-white/5 text-natural-ink/70 border-natural-border hover:bg-white dark:hover:bg-white/10"
                   )}
                 >
                   <div className={cn(
@@ -156,7 +179,7 @@ export default function App() {
               ))}
             </div>
 
-            <div className="mt-8 p-5 bg-natural-border/30 rounded-2xl border border-natural-border/50">
+            <div className="mt-8 p-5 bg-natural-border/30 dark:bg-white/5 rounded-2xl border border-natural-border/50 dark:border-white/10">
               <p className="text-[11px] text-natural-olive font-bold mb-2 flex items-center gap-2">
                  <Save size={14} />
                  实时保存中
@@ -166,18 +189,18 @@ export default function App() {
           </aside>
 
           {/* Main Content Area */}
-          <main className="flex-1 flex flex-col p-10 overflow-y-auto bg-natural-bg relative">
+          <main className="flex-1 flex flex-col p-10 overflow-y-auto bg-natural-bg relative transition-colors duration-300">
             <header className="flex justify-between items-center mb-10">
               <div className="space-y-1">
                 <h1 className="text-4xl font-serif font-bold text-natural-olive italic">周报内容编辑</h1>
-                <p className="text-sm opacity-60">请在右侧表单中输入本周的核心业务指标与计划。</p>
+                <p className="text-sm opacity-60">请在左侧表单中输入本周的核心业务指标与计划。</p>
               </div>
               <button 
                 onClick={() => {
                   setCurrentSlide(0);
                   setView('presentation');
                 }}
-                className="flex items-center gap-3 px-8 py-3.5 bg-natural-olive hover:bg-natural-olive-light text-white rounded-full font-bold transition-all shadow-xl shadow-natural-olive/20 active:scale-95"
+                className="flex items-center gap-3 px-8 py-3.5 bg-natural-olive hover:bg-natural-olive-light text-white rounded-full font-bold transition-all shadow-xl shadow-natural-olive/20 active:scale-95 border-b-4 border-natural-olive-light"
               >
                 <Play size={18} fill="currentColor" />
                 立即演示报告
@@ -185,26 +208,26 @@ export default function App() {
             </header>
 
             <div className="grid grid-cols-1 gap-8 max-w-4xl">
-              <section className="bg-white p-8 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-natural-border">
+              <section className="bg-white dark:bg-natural-sidebar/50 p-8 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-natural-border transition-colors duration-300">
                 <h2 className="text-lg font-bold mb-6 flex items-center gap-3 text-natural-olive">
-                  <span className="w-8 h-8 rounded-full bg-natural-olive/10 flex items-center justify-center text-sm italic">00</span>
+                  <span className="w-8 h-8 rounded-full bg-natural-olive/10 dark:bg-white/5 flex items-center justify-center text-sm italic">00</span>
                   基础信息
                 </h2>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 ml-1">第几周汇报？</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3 ml-1">第几周汇报？</label>
                   <input 
                     type="text" 
                     placeholder="例如：第 17 周"
                     value={reportData.weekNumber}
                     onChange={e => setData('weekNumber', e.target.value)}
-                    className="w-full px-5 py-4 rounded-2xl bg-natural-bg/50 border border-natural-border focus:outline-none focus:ring-4 focus:ring-natural-olive/5 focus:border-natural-olive transition-all text-xl font-serif italic"
+                    className="w-full px-5 py-4 rounded-2xl bg-natural-bg/50 border border-natural-border focus:outline-none focus:ring-4 focus:ring-natural-olive/5 dark:focus:ring-white/5 focus:border-natural-olive transition-all text-xl font-serif italic"
                   />
                 </div>
               </section>
 
-              <section className="bg-white p-8 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-natural-border grid gap-10">
+              <section className="bg-white dark:bg-natural-sidebar/50 p-8 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-natural-border grid gap-10 transition-colors duration-300">
                 <h2 className="text-lg font-bold mb-2 flex items-center gap-3 text-natural-olive">
-                  <span className="w-8 h-8 rounded-full bg-natural-olive/10 flex items-center justify-center text-sm italic">01</span>
+                  <span className="w-8 h-8 rounded-full bg-natural-olive/10 dark:bg-white/5 flex items-center justify-center text-sm italic">01</span>
                   具体汇报内容
                 </h2>
                 
@@ -247,7 +270,7 @@ export default function App() {
               </section>
             </div>
             
-            <footer className="mt-12 py-8 border-t border-natural-border/40 flex justify-between items-center text-slate-400 text-[11px] font-medium tracking-wide">
+            <footer className="mt-12 py-8 border-t border-natural-border/40 dark:border-[#3a3a30] flex justify-between items-center text-slate-400 dark:text-slate-500 text-[11px] font-medium tracking-wide">
               <div className="flex items-center gap-4">
                  <span>© 2024 YIRUITE PACKAGING</span>
                  <span className="opacity-40">|</span>
@@ -320,19 +343,19 @@ export default function App() {
 function FormField({ label, value, onChange, placeholder }: { label: string, value: string, onChange: (v: string) => void, placeholder: string }) {
   return (
     <div className="space-y-4">
-      <label className="text-xs font-bold uppercase tracking-widest text-slate-400 block ml-1">{label}</label>
+      <label className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 block ml-1">{label}</label>
       <textarea 
         rows={4}
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full px-5 py-4 rounded-2xl bg-natural-bg/50 border border-natural-border focus:outline-none focus:ring-4 focus:ring-natural-olive/5 focus:border-natural-olive transition-all resize-none shadow-inner"
+        className="w-full px-5 py-4 rounded-2xl bg-natural-bg/50 dark:bg-[#1a1a15]/50 border border-natural-border dark:border-[#3a3a30] focus:outline-none focus:ring-4 focus:ring-natural-olive/5 dark:focus:ring-white/5 focus:border-natural-olive dark:focus:border-[#5A5A40] transition-all resize-none shadow-inner dark:text-[#e0e0d0] dark:placeholder-slate-700"
       />
     </div>
   );
 }
 
-function Slide({ data, reportData, slides, key }: { data: SlideData, reportData: ReportData, slides: SlideData[], key?: React.Key }) {
+const Slide: React.FC<{ data: SlideData, reportData: ReportData, slides: SlideData[] }> = ({ data, reportData, slides }) => {
   const contentLines = data.content?.split('\n').filter(l => l.trim() !== '') || [];
 
   return (
@@ -341,20 +364,27 @@ function Slide({ data, reportData, slides, key }: { data: SlideData, reportData:
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="absolute inset-0 flex flex-col items-center justify-center text-natural-ink overflow-hidden"
+      className="absolute inset-0 flex flex-col items-center justify-center text-natural-ink dark:text-[#d1d1c7] overflow-hidden"
     >
-      {/* Background Image with Overlay */}
+      {/* Background Image with Enhanced Visibility */}
       <div 
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-10000 ease-linear scale-110"
-        style={{ backgroundImage: `url(${data.bgImage})` }}
+        className="absolute inset-0 bg-slate-900 overflow-hidden z-0"
       >
-        <div className="absolute inset-0 bg-natural-bg/50 backdrop-blur-sm" />
-        <div className="absolute inset-0 bg-warm-gradient opacity-80" />
-        <div className="absolute inset-0 dot-pattern opacity-10" />
+        <div 
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] ease-linear"
+          style={{ 
+            backgroundImage: `url("${data.bgImage}")`,
+            animation: 'kenburns 40s linear infinite alternate'
+          }}
+        />
+        {/* Overlays */}
+        <div className="absolute inset-0 bg-black/40 dark:bg-black/60 transition-colors duration-300 z-10" />
+        <div className="absolute inset-0 bg-natural-bg/10 dark:bg-black/20 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 z-10" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 w-full max-w-6xl px-12 py-16">
+      {/* Content with Text Shadows for Readability */}
+      <div className="relative z-20 w-full max-w-6xl px-12 py-16 text-white">
         {data.type === 'title' && (
           <motion.div 
             initial={{ y: 40, opacity: 0 }}
@@ -362,18 +392,18 @@ function Slide({ data, reportData, slides, key }: { data: SlideData, reportData:
             transition={{ delay: 0.3, duration: 0.8 }}
             className="flex flex-col items-center"
           >
-            <div className="w-24 h-1 bg-natural-olive mb-12 shadow-sm" />
-            <h3 className="text-3xl font-serif italic text-natural-olive-light tracking-wide mb-6">
+            <div className="w-24 h-1 bg-white mb-12 shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
+            <h3 className="text-3xl font-serif italic text-white/90 tracking-wide mb-6 drop-shadow-lg">
               成都依瑞特包装有限公司
             </h3>
-            <h1 className="text-7xl md:text-9xl font-bold leading-tight tracking-tighter text-natural-olive text-center">
+            <h1 className="text-7xl md:text-9xl font-bold leading-tight tracking-tighter text-white text-center drop-shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
               业务部 工作汇报
             </h1>
             
-            <div className="flex items-center justify-center gap-6 mt-16 bg-white/40 backdrop-blur-md py-5 px-12 rounded-full border border-white shadow-xl shadow-natural-olive/5">
-               <span className="opacity-40 text-xl font-serif italic italic font-light italic">第</span>
-               <span className="text-4xl font-serif font-black text-natural-olive border-b-4 border-natural-olive px-4">{reportData.weekNumber || 'XX'}</span>
-               <span className="opacity-40 text-xl font-serif italic font-light">周</span>
+            <div className="flex items-center justify-center gap-6 mt-16 bg-white/20 backdrop-blur-md py-5 px-12 rounded-full border border-white/30 shadow-2xl transition-colors">
+               <span className="opacity-70 text-xl font-serif italic">第</span>
+               <span className="text-4xl font-serif font-black text-white border-b-4 border-white px-4">{reportData.weekNumber || 'XX'}</span>
+               <span className="opacity-70 text-xl font-serif italic">周</span>
             </div>
           </motion.div>
         )}
@@ -386,9 +416,9 @@ function Slide({ data, reportData, slides, key }: { data: SlideData, reportData:
                transition={{ delay: 0.2 }}
                className="space-y-4"
             >
-              <div className="w-16 h-1 bg-natural-olive mb-4" />
-              <h2 className="text-8xl font-bold uppercase text-natural-olive tracking-tighter font-serif">目录</h2>
-              <p className="text-xl tracking-[0.4em] opacity-40 uppercase font-sans font-bold">Contents Index</p>
+              <div className="w-16 h-1 bg-white mb-4 shadow-lg" />
+              <h2 className="text-8xl font-bold uppercase text-white tracking-tighter font-serif drop-shadow-2xl">目录</h2>
+              <p className="text-xl tracking-[0.4em] opacity-80 uppercase font-sans font-bold text-white drop-shadow-md">Contents Index</p>
             </motion.div>
             <div className="space-y-6">
               {[
@@ -405,10 +435,10 @@ function Slide({ data, reportData, slides, key }: { data: SlideData, reportData:
                   transition={{ delay: 0.3 + i * 0.1 }}
                   className="flex items-center gap-8 group"
                 >
-                  <span className="text-3xl font-serif italic text-natural-olive-light font-bold w-12 border-b border-natural-olive opacity-40">
+                  <span className="text-3xl font-serif italic text-white/60 font-bold w-12 border-b-2 border-white/30">
                     {i + 1}
                   </span>
-                  <span className="text-3xl font-bold tracking-tight text-natural-olive group-hover:translate-x-2 transition-transform duration-300">
+                  <span className="text-3xl font-bold tracking-tight text-white drop-shadow-lg group-hover:translate-x-2 transition-transform duration-300">
                     {item.substring(3)}
                   </span>
                 </motion.div>
@@ -425,13 +455,13 @@ function Slide({ data, reportData, slides, key }: { data: SlideData, reportData:
                transition={{ delay: 0.2 }}
                className="mb-14"
             >
-              <h2 className="text-6xl font-bold text-natural-olive tracking-tighter font-serif italic mb-6">
+              <h2 className="text-6xl font-bold text-white tracking-tighter font-serif italic mb-6 drop-shadow-2xl">
                  {data.title.substring(3)}
               </h2>
-              <div className="h-1 w-32 bg-natural-olive rounded-full" />
+              <div className="h-1.5 w-32 bg-white rounded-full shadow-lg" />
             </motion.div>
             
-            <div className="space-y-10 pl-6 border-l-2 border-natural-border/60">
+            <div className="space-y-10 pl-8 border-l-4 border-white/20">
               {contentLines.length > 0 ? (
                 contentLines.map((line, i) => (
                   <motion.div 
@@ -441,8 +471,8 @@ function Slide({ data, reportData, slides, key }: { data: SlideData, reportData:
                     transition={{ delay: 0.4 + i * 0.1 }}
                     className="flex items-start gap-6"
                   >
-                    <div className="mt-3.5 w-3 h-3 rounded-full bg-natural-olive shadow-sm flex-shrink-0" />
-                    <p className="text-3xl md:text-4xl leading-snug font-serif text-natural-ink italic">
+                    <div className="mt-3.5 w-3.5 h-3.5 rounded-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.8)] flex-shrink-0" />
+                    <p className="text-3xl md:text-5xl leading-snug font-serif text-white italic drop-shadow-xl font-medium">
                       {line}
                     </p>
                   </motion.div>
@@ -451,7 +481,7 @@ function Slide({ data, reportData, slides, key }: { data: SlideData, reportData:
                 <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="italic text-natural-ink/30 text-3xl font-serif"
+                  className="italic text-white/40 text-3xl font-serif"
                 >
                   暂无具体内容填写...
                 </motion.div>
@@ -467,19 +497,19 @@ function Slide({ data, reportData, slides, key }: { data: SlideData, reportData:
             transition={{ delay: 0.3, duration: 1.2, type: "spring" }}
             className="text-center"
           >
-            <h1 className="text-9xl font-bold tracking-tighter text-natural-olive font-serif italic mb-12">
+            <h1 className="text-9xl font-bold tracking-tighter text-white font-serif italic mb-12 drop-shadow-2xl">
               汇报完毕
             </h1>
-            <div className="w-24 h-1 bg-natural-olive mx-auto mb-12" />
+            <div className="w-24 h-1 bg-white mx-auto mb-12 shadow-lg" />
             
-            <div className="grid grid-cols-2 max-w-2xl mx-auto gap-20 text-left pt-12 border-t border-natural-olive/20 opacity-60 text-sm italic font-serif">
+            <div className="grid grid-cols-2 max-w-2xl mx-auto gap-20 text-left pt-12 border-t border-white/20 text-white/80 text-sm italic font-serif drop-shadow-md">
                <div>
-                  <p className="font-bold text-natural-olive not-italic uppercase tracking-widest text-[10px] mb-2">Location</p>
+                  <p className="font-bold text-white not-italic uppercase tracking-widest text-[10px] mb-2 font-sans">Location</p>
                   <p>成都依瑞特包装有限公司</p>
                   <p>业务部 汇报中心</p>
                </div>
                <div className="text-right">
-                  <p className="font-bold text-natural-olive not-italic uppercase tracking-widest text-[10px] mb-2">Social</p>
+                  <p className="font-bold text-white not-italic uppercase tracking-widest text-[10px] mb-2 font-sans">Social</p>
                   <p>Yiruite Packaging Co., Ltd.</p>
                   <p>Weekly Sales Report</p>
                </div>
@@ -490,12 +520,12 @@ function Slide({ data, reportData, slides, key }: { data: SlideData, reportData:
 
       {/* Navigation Helper for Slideshow */}
       {data.type !== 'title' && data.type !== 'end' && (
-        <div className="absolute top-10 right-10 text-[xs] font-bold uppercase tracking-[0.3em] text-natural-olive/30 flex items-center gap-4">
+        <div className="absolute top-10 right-10 text-[xs] font-bold uppercase tracking-[0.3em] text-white/60 flex items-center gap-4 drop-shadow-md">
            <span>Page {slides.findIndex(s => s.id === data.id) + 1}</span>
-           <div className="w-12 h-px bg-natural-olive/20" />
+           <div className="w-12 h-px bg-white/40" />
            <span>Weekly {reportData.weekNumber || 'XX'}</span>
         </div>
       )}
     </motion.div>
   );
-}
+};
