@@ -14,6 +14,7 @@ type EditorShellProps = {
   onExportTemplate: () => void;
   onImportClick: () => void;
   onSelectPresenter: (presenterId: string) => void;
+  onDeletePresenter: (presenterId: string) => void;
   onOpenPresentation: () => void;
 };
 
@@ -25,6 +26,7 @@ export function EditorShell({
   onExportTemplate,
   onImportClick,
   onSelectPresenter,
+  onDeletePresenter,
   onOpenPresentation,
 }: EditorShellProps) {
   return (
@@ -37,6 +39,7 @@ export function EditorShell({
         onExportTemplate={onExportTemplate}
         onImportClick={onImportClick}
         onSelectPresenter={onSelectPresenter}
+        onDeletePresenter={onDeletePresenter}
       />
 
       <main className="flex h-screen flex-1 flex-col overflow-hidden bg-natural-bg px-8 py-8 transition-colors duration-300 md:px-10">

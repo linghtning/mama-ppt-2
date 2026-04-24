@@ -36,6 +36,7 @@ export const INITIAL_REPORT_DATA: ReportData = {
 export const STORE_KEY = 'mama-ppt-presentation-store';
 export const LEGACY_REPORT_KEY = 'yiruit-report-data';
 export const THEME_KEY = 'yiruit-theme';
+export const DEFAULT_DEMO_DISMISSED_KEY = 'mama-ppt-default-demo-dismissed';
 
 export function createEmptyReportData(): ReportData {
   return { ...INITIAL_REPORT_DATA };

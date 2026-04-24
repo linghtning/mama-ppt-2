@@ -17,7 +17,13 @@ import { exportPresenterTemplate, importPresenterFromFile } from './reportWorkbo
 import type { ViewMode } from './types/app.ts';
 
 export default function App() {
-  const { store, activePresenter, selectPresenter, upsertImportedPresenter } = usePresentationStore();
+  const {
+    store,
+    activePresenter,
+    selectPresenter,
+    upsertImportedPresenter,
+    deletePresenterById,
+  } = usePresentationStore();
   const [view, setView] = useState<ViewMode>('editor');
   const [currentSlide, setCurrentSlide] = useState(0);
   const { message, showMessage } = useToast();
@@ -103,6 +109,7 @@ export default function App() {
           onExportTemplate={exportPresenterTemplate}
           onImportClick={() => fileInputRef.current?.click()}
           onSelectPresenter={selectPresenter}
+          onDeletePresenter={deletePresenterById}
           onOpenPresentation={openPresentation}
         />
       ) : (

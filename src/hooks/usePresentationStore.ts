@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { STORE_KEY } from '../constants.ts';
+import { DEFAULT_DEMO_DISMISSED_KEY, STORE_KEY } from '../constants.ts';
 import {
+  deletePresenter,
   getActivePresenter,
   loadPresentationStore,
   upsertPresenter,
@@ -20,7 +21,19 @@ export function usePresentationStore() {
   }
 
   function upsertImportedPresenter(imported: PresenterRecord) {
+    localStorage.removeItem(DEFAULT_DEMO_DISMISSED_KEY);
     setStore((prev) => upsertPresenter(prev, imported));
+  }
+
+  function deletePresenterById(presenterId: string) {
+    setStore((prev) => {
+      const next = deletePresenter(prev, presenterId);
+      if (next.presenters.length === 0) {
+        localStorage.setItem(DEFAULT_DEMO_DISMISSED_KEY, 'true');
+      }
+
+      return next;
+    });
   }
 
   return {
@@ -29,5 +42,6 @@ export function usePresentationStore() {
     activePresenter,
     selectPresenter,
     upsertImportedPresenter,
+    deletePresenterById,
   };
 }

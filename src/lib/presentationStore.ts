@@ -1,5 +1,7 @@
 import {
   createDefaultDemoStore,
+  createDefaultStore,
+  DEFAULT_DEMO_DISMISSED_KEY,
   createPresenterRecord,
   LEGACY_REPORT_KEY,
   STORE_KEY,
@@ -13,7 +15,7 @@ export function loadPresentationStore(): PresentationStore {
       const parsed = JSON.parse(stored) as PresentationStore;
       if (Array.isArray(parsed.presenters)) {
         if (parsed.presenters.length === 0) {
-          return createDefaultDemoStore();
+          return isDefaultDemoDismissed() ? createDefaultStore() : createDefaultDemoStore();
         }
 
         return {
@@ -34,7 +36,7 @@ export function loadPresentationStore(): PresentationStore {
     return legacy;
   }
 
-  return createDefaultDemoStore();
+  return isDefaultDemoDismissed() ? createDefaultStore() : createDefaultDemoStore();
 }
 
 export function getActivePresenter(store: PresentationStore) {
@@ -76,6 +78,34 @@ export function upsertPresenter(
   };
 }
 
+export function deletePresenter(
+  store: PresentationStore,
+  presenterId: string,
+): PresentationStore {
+  const deleteIndex = store.presenters.findIndex((presenter) => presenter.id === presenterId);
+  if (deleteIndex === -1) {
+    return store;
+  }
+
+  const presenters = store.presenters.filter((presenter) => presenter.id !== presenterId);
+  if (presenters.length === 0) {
+    return {
+      presenters,
+      activePresenterId: null,
+    };
+  }
+
+  const activePresenterId =
+    store.activePresenterId === presenterId
+      ? presenters[Math.min(deleteIndex, presenters.length - 1)].id
+      : store.activePresenterId;
+
+  return {
+    presenters,
+    activePresenterId,
+  };
+}
+
 export function normalizePersonName(name: string) {
   return name.trim().toLocaleLowerCase();
 }
@@ -105,4 +135,8 @@ function migrateLegacyReport(): PresentationStore | null {
   } catch {
     return null;
   }
+}
+
+function isDefaultDemoDismissed() {
+  return localStorage.getItem(DEFAULT_DEMO_DISMISSED_KEY) === 'true';
 }

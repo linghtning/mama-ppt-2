@@ -20,6 +20,7 @@ import { useToast } from './hooks/useToast.ts';
 import { formatDateTime } from './lib/format.ts';
 import {
   getActivePresenter,
+  deletePresenter,
   loadPresentationStore,
   normalizePersonName,
   upsertPresenter,
@@ -54,6 +55,8 @@ upsertPresenter(
     updatedAt: formattedDate,
   },
 ) satisfies PresentationStore;
+
+deletePresenter(demoStore, demoPresenter?.id ?? '') satisfies PresentationStore;
 
 slides satisfies SlideData[];
 demoSlides satisfies SlideData[];

@@ -10,6 +10,7 @@ type EditorSidebarProps = {
   onExportTemplate: () => void;
   onImportClick: () => void;
   onSelectPresenter: (presenterId: string) => void;
+  onDeletePresenter: (presenterId: string) => void;
 };
 
 export function EditorSidebar({
@@ -20,6 +21,7 @@ export function EditorSidebar({
   onExportTemplate,
   onImportClick,
   onSelectPresenter,
+  onDeletePresenter,
 }: EditorSidebarProps) {
   return (
     <aside className="flex h-screen w-[340px] shrink-0 flex-col overflow-hidden border-r border-natural-border bg-natural-sidebar px-6 py-6 transition-colors duration-300">
@@ -64,6 +66,7 @@ export function EditorSidebar({
         presenters={presenters}
         activePresenter={activePresenter}
         onSelectPresenter={onSelectPresenter}
+        onDeletePresenter={onDeletePresenter}
       />
     </aside>
   );
