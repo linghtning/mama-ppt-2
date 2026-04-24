@@ -19,6 +19,10 @@ import {
   Users,
   X,
 } from 'lucide-react';
+import { InfoCard } from './components/ui/InfoCard.tsx';
+import { RuleCard } from './components/ui/RuleCard.tsx';
+import { StatCard } from './components/ui/StatCard.tsx';
+import { Toast } from './components/ui/Toast.tsx';
 import { usePresentationKeyboard } from './hooks/usePresentationKeyboard.ts';
 import { usePresentationStore } from './hooks/usePresentationStore.ts';
 import { useTheme } from './hooks/useTheme.ts';
@@ -107,18 +111,7 @@ export default function App() {
         onChange={handleImport}
       />
 
-      {message && (
-        <div
-          className={cn(
-            'fixed left-1/2 top-5 z-[70] -translate-x-1/2 rounded-full px-5 py-3 text-sm font-medium shadow-xl backdrop-blur-md',
-            message.tone === 'success' && 'bg-emerald-700/90 text-white',
-            message.tone === 'error' && 'bg-rose-700/90 text-white',
-            message.tone === 'info' && 'bg-slate-900/85 text-white',
-          )}
-        >
-          {message.text}
-        </div>
-      )}
+      <Toast message={message} />
 
       {view === 'editor' ? (
         <div className="flex h-screen overflow-hidden">
@@ -421,37 +414,6 @@ function EmptyPreviewState() {
       <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 opacity-75">
         后台不提供手工编辑。请导入 Excel 后查看人员列表，点击左侧某个人员，右侧会展示该人员的个人信息预览。
       </p>
-    </div>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-3xl border border-natural-border bg-white px-5 py-4 shadow-[0_8px_24px_rgba(0,0,0,0.03)] dark:bg-white/5">
-      <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-natural-olive/60">
-        {label}
-      </p>
-      <p className="mt-2 max-w-[180px] truncate text-lg font-semibold">{value}</p>
-    </div>
-  );
-}
-
-function InfoCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-3xl border border-natural-border bg-natural-bg/70 p-4 dark:bg-black/10">
-      <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-natural-olive/60">
-        {label}
-      </p>
-      <p className="mt-2 text-sm leading-6">{value}</p>
-    </div>
-  );
-}
-
-function RuleCard({ title, description }: { title: string; description: string }) {
-  return (
-    <div className="rounded-3xl border border-natural-border bg-natural-bg/70 p-5 dark:bg-black/10">
-      <p className="text-base font-semibold text-natural-olive">{title}</p>
-      <p className="mt-3 text-sm leading-7 opacity-75">{description}</p>
     </div>
   );
 }
