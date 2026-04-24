@@ -1,7 +1,7 @@
 {
   "name": "yiruite-report-desktop",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Offline weekly report desktop app for Yiruite Packaging",
   "type": "module",
   "main": "dist-electron/main.js",
