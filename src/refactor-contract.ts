@@ -1,5 +1,6 @@
 import type { PresentationStore, PresenterRecord, SlideData } from './types.ts';
 import type { ToastMessage, ViewMode } from './types/app.ts';
+import { createDefaultDemoStore } from './constants.ts';
 import { InfoCard } from './components/ui/InfoCard.tsx';
 import { RuleCard } from './components/ui/RuleCard.tsx';
 import { StatCard } from './components/ui/StatCard.tsx';
@@ -26,8 +27,11 @@ import {
 import { buildSlides } from './lib/slides.ts';
 
 const store = loadPresentationStore() satisfies PresentationStore;
+const demoStore = createDefaultDemoStore() satisfies PresentationStore;
 const activePresenter = getActivePresenter(store) satisfies PresenterRecord | null;
+const demoPresenter = getActivePresenter(demoStore) satisfies PresenterRecord | null;
 const slides = buildSlides(activePresenter) satisfies SlideData[];
+const demoSlides = buildSlides(demoPresenter) satisfies SlideData[];
 const normalizedName = normalizePersonName(' 演讲人 ') satisfies string;
 const formattedDate = formatDateTime('2026-04-24T00:00:00.000Z') satisfies string;
 
@@ -52,6 +56,7 @@ upsertPresenter(
 ) satisfies PresentationStore;
 
 slides satisfies SlideData[];
+demoSlides satisfies SlideData[];
 
 const viewMode = 'editor' satisfies ViewMode;
 const toastMessage = { tone: 'info', text: viewMode } satisfies ToastMessage;

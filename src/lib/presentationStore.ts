@@ -1,5 +1,5 @@
 import {
-  createDefaultStore,
+  createDefaultDemoStore,
   createPresenterRecord,
   LEGACY_REPORT_KEY,
   STORE_KEY,
@@ -12,6 +12,10 @@ export function loadPresentationStore(): PresentationStore {
     if (stored) {
       const parsed = JSON.parse(stored) as PresentationStore;
       if (Array.isArray(parsed.presenters)) {
+        if (parsed.presenters.length === 0) {
+          return createDefaultDemoStore();
+        }
+
         return {
           presenters: parsed.presenters,
           activePresenterId:
@@ -30,7 +34,7 @@ export function loadPresentationStore(): PresentationStore {
     return legacy;
   }
 
-  return createDefaultStore();
+  return createDefaultDemoStore();
 }
 
 export function getActivePresenter(store: PresentationStore) {
