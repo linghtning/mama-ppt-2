@@ -13,8 +13,9 @@
     "build": "vite build",
     "build:electron": "tsc -p tsconfig.electron.json",
     "build:desktop": "pnpm run build && pnpm run build:electron",
-    "dist:win": "pnpm run build:desktop && electron-builder --win --config.win.signAndEditExecutable=false",
-    "dist:win:dir": "pnpm run build:desktop && electron-builder --win --dir --config.win.signAndEditExecutable=false",
+    "bump:version": "node scripts/bump-package-version.mjs",
+    "dist:win": "pnpm run build:desktop && pnpm run bump:version && electron-builder --win --config.win.signAndEditExecutable=false",
+    "dist:win:dir": "pnpm run build:desktop && pnpm run bump:version && electron-builder --win --dir --config.win.signAndEditExecutable=false",
     "preview": "vite preview",
     "clean": "rm -rf dist dist-electron release",
     "lint": "tsc --noEmit && tsc -p tsconfig.electron.json --noEmit"
