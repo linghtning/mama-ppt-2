@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { motion } from 'motion/react';
+import { formatPresenterDepartmentTitle } from '../../lib/presenterDisplay.ts';
 import type { PresenterRecord, SlideData } from '../../types.ts';
 
 type SlideProps = {
@@ -53,7 +54,7 @@ export const Slide: FC<SlideProps> = ({ data, presenter, slides }) => {
               成都依瑞特包装有限公司
             </h3>
             <h1 className="text-center text-7xl font-bold leading-tight tracking-tighter text-white drop-shadow-[0_10px_25px_rgba(0,0,0,0.5)] md:text-9xl">
-              业务部 工作汇报
+              {formatPresenterDepartmentTitle(presenter)}
             </h1>
 
             <div className="mt-16 flex items-center justify-center gap-6 rounded-full border border-white/30 bg-white/20 px-12 py-5 shadow-2xl backdrop-blur-md transition-colors">

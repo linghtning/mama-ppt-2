@@ -19,6 +19,10 @@ import { useTheme } from './hooks/useTheme.ts';
 import { useToast } from './hooks/useToast.ts';
 import { formatDateTime } from './lib/format.ts';
 import {
+  formatPresenterBadge,
+  formatPresenterDepartmentTitle,
+} from './lib/presenterDisplay.ts';
+import {
   getActivePresenter,
   deletePresenter,
   loadPresentationStore,
@@ -33,6 +37,8 @@ const activePresenter = getActivePresenter(store) satisfies PresenterRecord | nu
 const demoPresenter = getActivePresenter(demoStore) satisfies PresenterRecord | null;
 const slides = buildSlides(activePresenter) satisfies SlideData[];
 const demoSlides = buildSlides(demoPresenter) satisfies SlideData[];
+const demoBadge = formatPresenterBadge(demoPresenter) satisfies string;
+const demoTitle = formatPresenterDepartmentTitle(demoPresenter) satisfies string;
 const normalizedName = normalizePersonName(' 演讲人 ') satisfies string;
 const formattedDate = formatDateTime('2026-04-24T00:00:00.000Z') satisfies string;
 
@@ -60,6 +66,8 @@ deletePresenter(demoStore, demoPresenter?.id ?? '') satisfies PresentationStore;
 
 slides satisfies SlideData[];
 demoSlides satisfies SlideData[];
+demoBadge satisfies string;
+demoTitle satisfies string;
 
 const viewMode = 'editor' satisfies ViewMode;
 const toastMessage = { tone: 'info', text: viewMode } satisfies ToastMessage;

@@ -1,5 +1,6 @@
 import { AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
+import { formatPresenterBadge } from '../../lib/presenterDisplay.ts';
 import type { PresenterRecord, SlideData } from '../../types.ts';
 import { PresentationControls } from './PresentationControls.tsx';
 import { Slide } from './Slide.tsx';
@@ -36,7 +37,7 @@ export function PresentationScreen({
 
       <div className="absolute right-6 top-6 z-50 flex items-center gap-3">
         <div className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm text-white backdrop-blur-md">
-          {activePresenter?.personName || '未选择'}
+          {formatPresenterBadge(activePresenter)}
         </div>
         <button
           onClick={onExit}
