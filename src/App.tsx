@@ -20,16 +20,20 @@ import {
   X,
 } from 'lucide-react';
 import {
-  BG_IMAGES,
-  createDefaultStore,
-  createPresenterRecord,
-  LEGACY_REPORT_KEY,
   STORE_KEY,
   THEME_KEY,
 } from './constants.ts';
+import { formatDateTime } from './lib/format.ts';
+import {
+  getActivePresenter,
+  loadPresentationStore,
+  normalizePersonName,
+  upsertPresenter,
+} from './lib/presentationStore.ts';
+import { buildSlides } from './lib/slides.ts';
 import { cn } from './lib/utils.ts';
 import { exportPresenterTemplate, importPresenterFromFile } from './reportWorkbook.ts';
-import { PresentationStore, PresenterRecord, ReportData, SlideData } from './types.ts';
+import { PresentationStore, PresenterRecord, SlideData } from './types.ts';
 
 type ViewMode = 'editor' | 'presentation';
 type MessageTone = 'success' | 'error' | 'info';
@@ -686,179 +690,3 @@ const Slide: React.FC<{
     </motion.div>
   );
 };
-
-function buildSlides(presenter: PresenterRecord | null): SlideData[] {
-  const reportData = presenter?.reportData;
-
-  return [
-    {
-      id: 'title',
-      title: `${presenter?.personName || '未命名演讲人'} 工作汇报`,
-      type: 'title',
-      bgImage: BG_IMAGES.TITLE,
-    },
-    {
-      id: 'agenda',
-      title: '目录',
-      type: 'agenda',
-      bgImage: BG_IMAGES.AGENDA,
-    },
-    {
-      id: 'completion',
-      title: '01 上周工作完成情况',
-      content: reportData?.lastWeekCompletion || '',
-      type: 'content',
-      bgImage: BG_IMAGES.COMPLETION,
-    },
-    {
-      id: 'plan',
-      title: '02 本周工作计划',
-      content: reportData?.thisWeekPlan || '',
-      type: 'content',
-      bgImage: BG_IMAGES.PLAN,
-    },
-    {
-      id: 'data',
-      title: '03 数据支持',
-      content: reportData?.dataSupport || '',
-      type: 'content',
-      bgImage: BG_IMAGES.DATA,
-    },
-    {
-      id: 'problems',
-      title: '04 问题反馈',
-      content: reportData?.problems || '',
-      type: 'content',
-      bgImage: BG_IMAGES.PROBLEMS,
-    },
-    {
-      id: 'others',
-      title: '05 其他补充',
-      content: reportData?.others || '',
-      type: 'content',
-      bgImage: BG_IMAGES.OTHERS,
-    },
-    {
-      id: 'end',
-      title: '汇报完毕',
-      type: 'end',
-      bgImage: BG_IMAGES.END,
-    },
-  ];
-}
-
-function loadPresentationStore(): PresentationStore {
-  try {
-    const stored = localStorage.getItem(STORE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored) as PresentationStore;
-      if (Array.isArray(parsed.presenters)) {
-        return {
-          presenters: parsed.presenters,
-          activePresenterId:
-            parsed.presenters.some((item) => item.id === parsed.activePresenterId)
-              ? parsed.activePresenterId
-              : parsed.presenters[0]?.id ?? null,
-        };
-      }
-    }
-  } catch {
-    localStorage.removeItem(STORE_KEY);
-  }
-
-  const legacy = migrateLegacyReport();
-  if (legacy) {
-    return legacy;
-  }
-
-  return createDefaultStore();
-}
-
-function getActivePresenter(store: PresentationStore) {
-  return (
-    store.presenters.find((item) => item.id === store.activePresenterId) ??
-    store.presenters[0] ??
-    null
-  );
-}
-
-function upsertPresenter(store: PresentationStore, imported: PresenterRecord): PresentationStore {
-  const importKey = normalizePersonName(imported.personName);
-  const existingIndex = store.presenters.findIndex(
-    (item) => normalizePersonName(item.personName) === importKey,
-  );
-
-  if (existingIndex === -1) {
-    return {
-      presenters: [...store.presenters, imported],
-      activePresenterId: imported.id,
-    };
-  }
-
-  const existing = store.presenters[existingIndex];
-  const replacedPresenter: PresenterRecord = {
-    ...imported,
-    id: existing.id,
-    createdAt: existing.createdAt,
-  };
-
-  return {
-    presenters: store.presenters.map((item, index) =>
-      index === existingIndex ? replacedPresenter : item,
-    ),
-    activePresenterId: replacedPresenter.id,
-  };
-}
-
-function normalizePersonName(name: string) {
-  return name.trim().toLocaleLowerCase();
-}
-
-function migrateLegacyReport(): PresentationStore | null {
-  try {
-    const legacyRaw = localStorage.getItem(LEGACY_REPORT_KEY);
-    if (!legacyRaw) {
-      return null;
-    }
-
-    const legacyData = JSON.parse(legacyRaw) as ReportData;
-    const presenter = createPresenterRecord('默认演讲人');
-    presenter.reportData = {
-      weekNumber: legacyData.weekNumber || '',
-      lastWeekCompletion: legacyData.lastWeekCompletion || '',
-      thisWeekPlan: legacyData.thisWeekPlan || '',
-      dataSupport: legacyData.dataSupport || '',
-      problems: legacyData.problems || '',
-      others: legacyData.others || '',
-    };
-
-    return {
-      presenters: [presenter],
-      activePresenterId: presenter.id,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function getDepartmentAndPosition(presenter: PresenterRecord | null) {
-  if (!presenter) {
-    return '未填写';
-  }
-
-  return [presenter.department, presenter.position].filter(Boolean).join(' / ') || '未填写';
-}
-
-function formatDateTime(iso: string) {
-  if (!iso) {
-    return '未记录';
-  }
-
-  return new Intl.DateTimeFormat('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(iso));
-}
