@@ -19,81 +19,38 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import {
-  STORE_KEY,
-  THEME_KEY,
-} from './constants.ts';
+import { usePresentationKeyboard } from './hooks/usePresentationKeyboard.ts';
+import { usePresentationStore } from './hooks/usePresentationStore.ts';
+import { useTheme } from './hooks/useTheme.ts';
+import { useToast } from './hooks/useToast.ts';
 import { formatDateTime } from './lib/format.ts';
-import {
-  getActivePresenter,
-  loadPresentationStore,
-  normalizePersonName,
-  upsertPresenter,
-} from './lib/presentationStore.ts';
+import { normalizePersonName } from './lib/presentationStore.ts';
 import { buildSlides } from './lib/slides.ts';
 import { cn } from './lib/utils.ts';
 import { exportPresenterTemplate, importPresenterFromFile } from './reportWorkbook.ts';
-import { PresentationStore, PresenterRecord, SlideData } from './types.ts';
-
-type ViewMode = 'editor' | 'presentation';
-type MessageTone = 'success' | 'error' | 'info';
-
-type ToastMessage = {
-  tone: MessageTone;
-  text: string;
-};
+import type { ViewMode } from './types/app.ts';
+import { PresenterRecord, SlideData } from './types.ts';
 
 export default function App() {
-  const [store, setStore] = useState<PresentationStore>(loadPresentationStore);
+  const { store, activePresenter, selectPresenter, upsertImportedPresenter } = usePresentationStore();
   const [view, setView] = useState<ViewMode>('editor');
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [message, setMessage] = useState<ToastMessage | null>(null);
-  const [isDark, setIsDark] = useState(() => localStorage.getItem(THEME_KEY) === 'dark');
+  const { message, showMessage } = useToast();
+  const { isDark, setIsDark } = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const activePresenter = getActivePresenter(store);
   const slides = buildSlides(activePresenter);
 
-  useEffect(() => {
-    localStorage.setItem(STORE_KEY, JSON.stringify(store));
-  }, [store]);
+  const goToPreviousSlide = () => setCurrentSlide((prev) => Math.max(prev - 1, 0));
+  const goToNextSlide = () => setCurrentSlide((prev) => Math.min(prev + 1, slides.length - 1));
 
-  useEffect(() => {
-    localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
-    document.documentElement.classList.toggle('dark', isDark);
-  }, [isDark]);
-
-  useEffect(() => {
-    if (!message) {
-      return undefined;
-    }
-
-    const timer = window.setTimeout(() => setMessage(null), 3200);
-    return () => window.clearTimeout(timer);
-  }, [message]);
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (view !== 'presentation') {
-        return;
-      }
-
-      if (event.key === 'ArrowRight' || event.key === ' ') {
-        setCurrentSlide((prev) => Math.min(prev + 1, slides.length - 1));
-      }
-
-      if (event.key === 'ArrowLeft') {
-        setCurrentSlide((prev) => Math.max(prev - 1, 0));
-      }
-
-      if (event.key === 'Escape') {
-        setView('editor');
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [slides.length, view]);
+  usePresentationKeyboard({
+    enabled: view === 'presentation',
+    slideCount: slides.length,
+    goNext: goToNextSlide,
+    goPrevious: goToPreviousSlide,
+    exit: () => setView('editor'),
+  });
 
   useEffect(() => {
     if (currentSlide > slides.length - 1) {
@@ -115,8 +72,8 @@ export default function App() {
         (item) => normalizePersonName(item.personName) === normalizePersonName(imported.personName),
       );
 
-      setStore((prev) => upsertPresenter(prev, imported));
-      setMessage({
+      upsertImportedPresenter(imported);
+      showMessage({
         tone: 'success',
         text: shouldReplace
           ? `已用新 Excel 替换 ${imported.personName} 的旧记录。`
@@ -124,7 +81,7 @@ export default function App() {
       });
     } catch (error) {
       const text = error instanceof Error ? error.message : '导入失败，请检查 Excel 模板。';
-      setMessage({
+      showMessage({
         tone: 'error',
         text,
       });
@@ -224,7 +181,7 @@ export default function App() {
                     return (
                       <button
                         key={presenter.id}
-                        onClick={() => setStore((prev) => ({ ...prev, activePresenterId: presenter.id }))}
+                        onClick={() => selectPresenter(presenter.id)}
                         className={cn(
                           'w-full rounded-xl border px-3.5 py-2.5 text-left transition-all',
                           isActive
@@ -409,7 +366,7 @@ export default function App() {
 
           <div className="pointer-events-none absolute bottom-10 left-0 right-0 z-50 flex items-center justify-center gap-8">
             <button
-              onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
+              onClick={goToPreviousSlide}
               disabled={currentSlide === 0}
               className={cn(
                 'pointer-events-auto rounded-full p-4 backdrop-blur-md transition-all active:scale-90',
@@ -426,7 +383,7 @@ export default function App() {
             </div>
 
             <button
-              onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, slides.length - 1))}
+              onClick={goToNextSlide}
               disabled={currentSlide === slides.length - 1}
               className={cn(
                 'pointer-events-auto rounded-full p-4 backdrop-blur-md transition-all active:scale-90',

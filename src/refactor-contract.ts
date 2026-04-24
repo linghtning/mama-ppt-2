@@ -1,4 +1,9 @@
 import type { PresentationStore, PresenterRecord, SlideData } from './types.ts';
+import type { ToastMessage, ViewMode } from './types/app.ts';
+import { usePresentationKeyboard } from './hooks/usePresentationKeyboard.ts';
+import { usePresentationStore } from './hooks/usePresentationStore.ts';
+import { useTheme } from './hooks/useTheme.ts';
+import { useToast } from './hooks/useToast.ts';
 import { formatDateTime } from './lib/format.ts';
 import {
   getActivePresenter,
@@ -35,3 +40,15 @@ upsertPresenter(
 ) satisfies PresentationStore;
 
 slides satisfies SlideData[];
+
+const viewMode = 'editor' satisfies ViewMode;
+const toastMessage = { tone: 'info', text: viewMode } satisfies ToastMessage;
+const hookExports = [
+  useTheme,
+  useToast,
+  usePresentationStore,
+  usePresentationKeyboard,
+  toastMessage,
+];
+
+hookExports satisfies unknown[];
