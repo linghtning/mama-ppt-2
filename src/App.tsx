@@ -6,28 +6,16 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
-  Building2,
   ChevronLeft,
   ChevronRight,
-  Download,
-  FileSpreadsheet,
-  Moon,
-  Play,
-  Sparkles,
-  Sun,
-  Upload,
-  Users,
   X,
 } from 'lucide-react';
-import { InfoCard } from './components/ui/InfoCard.tsx';
-import { RuleCard } from './components/ui/RuleCard.tsx';
-import { StatCard } from './components/ui/StatCard.tsx';
+import { EditorShell } from './components/editor/EditorShell.tsx';
 import { Toast } from './components/ui/Toast.tsx';
 import { usePresentationKeyboard } from './hooks/usePresentationKeyboard.ts';
 import { usePresentationStore } from './hooks/usePresentationStore.ts';
 import { useTheme } from './hooks/useTheme.ts';
 import { useToast } from './hooks/useToast.ts';
-import { formatDateTime } from './lib/format.ts';
 import { normalizePersonName } from './lib/presentationStore.ts';
 import { buildSlides } from './lib/slides.ts';
 import { cn } from './lib/utils.ts';
@@ -114,223 +102,16 @@ export default function App() {
       <Toast message={message} />
 
       {view === 'editor' ? (
-        <div className="flex h-screen overflow-hidden">
-          <aside className="flex h-screen w-[340px] shrink-0 flex-col overflow-hidden border-r border-natural-border bg-natural-sidebar px-6 py-6 transition-colors duration-300">
-            <header className="mb-8 flex items-start justify-between gap-3">
-              <div>
-                <div className="mb-1 flex items-center gap-2 text-natural-olive">
-                  <Building2 size={24} strokeWidth={2.5} />
-                  <span className="font-serif text-xl font-bold italic">演讲后台</span>
-                </div>
-                <p className="text-xs uppercase tracking-[0.24em] opacity-55">
-                  Import Only Manager
-                </p>
-              </div>
-              <button
-                onClick={() => setIsDark((prev) => !prev)}
-                className="rounded-full p-2 text-natural-olive transition-colors hover:bg-natural-olive/10 dark:hover:bg-white/10"
-                title="切换主题"
-              >
-                {isDark ? <Sun size={18} /> : <Moon size={18} />}
-              </button>
-            </header>
-
-            <div className="grid gap-3">
-              <button
-                onClick={() => exportPresenterTemplate()}
-                className="flex items-center justify-center gap-2 rounded-2xl border border-natural-border bg-white/75 px-4 py-3 font-semibold transition hover:bg-white dark:bg-white/5 dark:hover:bg-white/10"
-              >
-                <Download size={18} />
-                导出 Excel 模板
-              </button>
-
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center justify-center gap-2 rounded-2xl bg-natural-olive px-4 py-3 font-semibold text-white shadow-lg shadow-natural-olive/15 transition hover:bg-natural-olive-light"
-              >
-                <Upload size={18} />
-                导入 Excel
-              </button>
-            </div>
-
-            <div className="mt-6 flex min-h-0 flex-1 flex-col rounded-3xl border border-natural-border/70 bg-white/55 p-5 shadow-[0_8px_30px_rgba(0,0,0,0.03)] dark:bg-white/5">
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.28em] text-natural-olive/65">
-                    导入列表
-                  </p>
-                  <p className="mt-1 text-sm opacity-75">后台只展示已导入的人员 Excel 列表</p>
-                </div>
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-natural-olive/10 text-natural-olive">
-                  <Users size={20} />
-                </div>
-              </div>
-
-              {store.presenters.length > 0 ? (
-                <div className="theme-scrollbar min-h-0 flex-1 space-y-1.5 overflow-y-auto pr-2">
-                  {store.presenters.map((presenter, index) => {
-                    const isActive = presenter.id === activePresenter?.id;
-
-                    return (
-                      <button
-                        key={presenter.id}
-                        onClick={() => selectPresenter(presenter.id)}
-                        className={cn(
-                          'w-full rounded-xl border px-3.5 py-2.5 text-left transition-all',
-                          isActive
-                            ? 'border-natural-olive/30 bg-white text-natural-olive shadow-none ring-1 ring-natural-olive/8 dark:bg-white/8'
-                            : 'border-transparent bg-transparent shadow-none hover:border-natural-border/70 hover:bg-white/45 dark:hover:bg-white/8',
-                        )}
-                      >
-                        <div className="flex items-center justify-between gap-3">
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-[14px] font-semibold leading-5">
-                              {presenter.personName}
-                            </p>
-                            <p
-                              className={cn(
-                                'mt-0.5 truncate text-[11px] leading-5',
-                                isActive ? 'text-natural-olive/80' : 'opacity-60',
-                              )}
-                            >
-                              {presenter.department || '未填写部门'}
-                              {presenter.position ? ` / ${presenter.position}` : ''}
-                            </p>
-                          </div>
-                          <span
-                            className={cn(
-                              'shrink-0 text-[10px] font-semibold uppercase tracking-[0.18em]',
-                              isActive ? 'text-natural-olive/70' : 'opacity-35',
-                            )}
-                          >
-                            {String(index + 1).padStart(2, '0')}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              ) : (
-                <EmptyListState />
-              )}
-            </div>
-          </aside>
-
-          <main className="flex h-screen flex-1 flex-col overflow-hidden bg-natural-bg px-8 py-8 transition-colors duration-300 md:px-10">
-            <header className="mb-8 flex shrink-0 flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.32em] text-natural-olive/65">
-                  后台只读预览
-                </p>
-                <h1 className="mt-2 font-serif text-4xl font-bold italic text-natural-olive">
-                  Excel 导入人员中心
-                </h1>
-                <p className="mt-2 text-sm opacity-70">
-                  演讲信息在后台不可编辑。如需修改，请重新导入同名 Excel，系统会自动替换旧记录。
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-3">
-                <StatCard label="已导入人数" value={String(store.presenters.length)} />
-                <button
-                  onClick={openPresentation}
-                  disabled={!activePresenter}
-                  className={cn(
-                    'flex items-center gap-3 rounded-full px-8 py-3.5 font-bold text-white shadow-xl transition',
-                    activePresenter
-                      ? 'bg-natural-olive shadow-natural-olive/20 hover:bg-natural-olive-light'
-                      : 'cursor-not-allowed bg-slate-400/70 shadow-none',
-                  )}
-                >
-                  <Play size={18} fill="currentColor" />
-                  前台开始演示
-                </button>
-              </div>
-            </header>
-
-            <div className="min-h-0 flex-1 overflow-hidden">
-              {activePresenter ? (
-                <div className="grid h-full gap-8 xl:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
-                  <section className="theme-scrollbar min-h-0 overflow-y-auto rounded-[28px] border border-natural-border bg-white p-7 shadow-[0_10px_40px_rgba(0,0,0,0.04)] dark:bg-natural-sidebar/50">
-                  <div className="mb-5 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-[0.28em] text-natural-olive/65">
-                        当前人员
-                      </p>
-                      <h2 className="mt-2 text-xl font-bold text-natural-olive">
-                        个人信息预览
-                      </h2>
-                    </div>
-                    <div className="rounded-2xl bg-natural-olive/10 p-3 text-natural-olive">
-                      <FileSpreadsheet size={20} />
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <InfoCard label="人员姓名" value={activePresenter.personName} />
-                    <InfoCard label="所属部门" value={activePresenter.department || '未填写'} />
-                    <InfoCard label="岗位 / 身份" value={activePresenter.position || '未填写'} />
-                    <InfoCard
-                      label="汇报周次"
-                      value={activePresenter.reportData.weekNumber || '未填写'}
-                    />
-                    <InfoCard
-                      label="最后导入时间"
-                      value={formatDateTime(activePresenter.updatedAt)}
-                    />
-                  </div>
-                </section>
-
-                <section className="theme-scrollbar min-h-0 overflow-y-auto rounded-[28px] border border-natural-border bg-white p-8 shadow-[0_10px_40px_rgba(0,0,0,0.04)] dark:bg-natural-sidebar/50">
-                  <div className="mb-6">
-                    <p className="text-xs font-bold uppercase tracking-[0.28em] text-natural-olive/65">
-                      导入规则
-                    </p>
-                    <h2 className="mt-2 text-2xl font-bold text-natural-olive">
-                      后台使用说明
-                    </h2>
-                  </div>
-
-                  <div className="grid gap-5 md:grid-cols-2">
-                    <RuleCard
-                      title="后台不可编辑"
-                      description="后台不再提供手工修改演讲信息，列表中的数据全部来自导入的 Excel。"
-                    />
-                    <RuleCard
-                      title="同名自动替换"
-                      description="再次导入同名人员的 Excel 时，会直接替换旧记录，不会重复新增。"
-                    />
-                    <RuleCard
-                      title="右侧只读预览"
-                      description="点击左侧人员后，右侧只显示该人员的个人信息，不提供编辑入口。"
-                    />
-                    <RuleCard
-                      title="前台固定播放"
-                      description="前台只播放后台当前选中的人员，进入演示后不能在前台切换其他人员。"
-                    />
-                  </div>
-
-                  <div className="mt-8 rounded-3xl bg-natural-bg/70 p-5 dark:bg-black/10">
-                    <p className="text-sm font-semibold text-natural-olive">Excel 流程</p>
-                    <p className="mt-3 text-sm leading-7 opacity-75">
-                      先导出单人 Excel 模板。模板里已经带了示例内容，直接覆盖示例即可；基础信息填写在前几列，多条演讲内容按你截图那样在同一列里向下逐行填写，导入时系统会自动合并。若后续要修改同一个人的演讲内容，请重新导入同名 Excel，系统会用新数据覆盖旧数据。
-                    </p>
-                  </div>
-                </section>
-                </div>
-              ) : (
-                <EmptyPreviewState />
-              )}
-            </div>
-
-            <footer className="mt-6 flex shrink-0 justify-end">
-              <div className="flex items-center gap-2 rounded-full border border-natural-border/70 bg-white/70 px-4 py-2 text-sm text-natural-olive shadow-[0_8px_24px_rgba(0,0,0,0.03)] dark:bg-white/5">
-                <Sparkles size={16} />
-                <span>专属定制:祝妈妈每天工作都有好心情</span>
-              </div>
-            </footer>
-          </main>
-        </div>
+        <EditorShell
+          presenters={store.presenters}
+          activePresenter={activePresenter}
+          isDark={isDark}
+          onToggleTheme={() => setIsDark((prev) => !prev)}
+          onExportTemplate={exportPresenterTemplate}
+          onImportClick={() => fileInputRef.current?.click()}
+          onSelectPresenter={selectPresenter}
+          onOpenPresentation={openPresentation}
+        />
       ) : (
         <div className="fixed inset-0 z-50 flex flex-col overflow-hidden bg-black select-none">
           <div className="relative flex-1">
@@ -390,30 +171,6 @@ export default function App() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function EmptyListState() {
-  return (
-    <div className="rounded-2xl border border-dashed border-natural-border bg-natural-bg/60 p-5 text-sm leading-7 opacity-75 dark:bg-black/10">
-      还没有导入任何人员。先导出 Excel 模板并填写，再导入到后台列表。
-    </div>
-  );
-}
-
-function EmptyPreviewState() {
-  return (
-    <div className="rounded-[32px] border border-dashed border-natural-border bg-white/70 p-10 text-center shadow-[0_10px_40px_rgba(0,0,0,0.03)] dark:bg-white/5">
-      <p className="text-xs font-bold uppercase tracking-[0.3em] text-natural-olive/65">
-        Ready For Import
-      </p>
-      <h2 className="mt-4 font-serif text-3xl font-bold italic text-natural-olive">
-        暂无可预览人员
-      </h2>
-      <p className="mx-auto mt-4 max-w-2xl text-sm leading-8 opacity-75">
-        后台不提供手工编辑。请导入 Excel 后查看人员列表，点击左侧某个人员，右侧会展示该人员的个人信息预览。
-      </p>
     </div>
   );
 }

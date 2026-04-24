@@ -4,6 +4,11 @@ import { InfoCard } from './components/ui/InfoCard.tsx';
 import { RuleCard } from './components/ui/RuleCard.tsx';
 import { StatCard } from './components/ui/StatCard.tsx';
 import { Toast } from './components/ui/Toast.tsx';
+import { EditorShell } from './components/editor/EditorShell.tsx';
+import { EditorSidebar } from './components/editor/EditorSidebar.tsx';
+import { EmptyPreviewState } from './components/editor/EmptyPreviewState.tsx';
+import { PresenterList } from './components/editor/PresenterList.tsx';
+import { PresenterPreview } from './components/editor/PresenterPreview.tsx';
 import { usePresentationKeyboard } from './hooks/usePresentationKeyboard.ts';
 import { usePresentationStore } from './hooks/usePresentationStore.ts';
 import { useTheme } from './hooks/useTheme.ts';
@@ -48,7 +53,12 @@ slides satisfies SlideData[];
 const viewMode = 'editor' satisfies ViewMode;
 const toastMessage = { tone: 'info', text: viewMode } satisfies ToastMessage;
 const hookExports = [
+  EditorShell,
+  EditorSidebar,
+  EmptyPreviewState,
   InfoCard,
+  PresenterList,
+  PresenterPreview,
   RuleCard,
   StatCard,
   Toast,
