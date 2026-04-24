@@ -9,6 +9,9 @@ import { EditorSidebar } from './components/editor/EditorSidebar.tsx';
 import { EmptyPreviewState } from './components/editor/EmptyPreviewState.tsx';
 import { PresenterList } from './components/editor/PresenterList.tsx';
 import { PresenterPreview } from './components/editor/PresenterPreview.tsx';
+import { PresentationControls } from './components/presentation/PresentationControls.tsx';
+import { PresentationScreen } from './components/presentation/PresentationScreen.tsx';
+import { Slide } from './components/presentation/Slide.tsx';
 import { usePresentationKeyboard } from './hooks/usePresentationKeyboard.ts';
 import { usePresentationStore } from './hooks/usePresentationStore.ts';
 import { useTheme } from './hooks/useTheme.ts';
@@ -58,8 +61,11 @@ const hookExports = [
   EmptyPreviewState,
   InfoCard,
   PresenterList,
+  PresentationControls,
+  PresentationScreen,
   PresenterPreview,
   RuleCard,
+  Slide,
   StatCard,
   Toast,
   useTheme,
